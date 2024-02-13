@@ -125,11 +125,25 @@
 
                     let intervalId = setInterval(function() {
                         if (path.length > 0) {
+                            robotPosition = [robotCell.cellIndex, robotCell.parentElement.rowIndex];
+                            destination = [destinationCell.cellIndex, destinationCell.parentElement.rowIndex];
+
                             let nextCell = path.shift();
                             let nextCellElement = document.getElementsByTagName('tr')[nextCell[1]].children[nextCell[0]];
 
                             robotCell.textContent = robotCell.textContent.replace('Robot', '').trim();
-                            nextCellElement.textContent = 'Robot';
+                            if (nextCell[0] === destination[0] && nextCell[1] === destination[1]) {
+                                if (nextCellElement.textContent.includes('-D')) {
+                                    nextCellElement.textContent = 'Robot';
+                                } else {
+                                    nextCellElement.textContent = 'Robot\n' + nextCellElement.textContent;
+                                }
+                                robotCell.textContent = robotCell.textContent.replace('Robot', '').trim();
+                            } else {
+                                robotCell.textContent = robotCell.textContent.replace('Robot', '').trim();
+                                nextCellElement.textContent = 'Robot';
+                            }
+                            
                             nextCellElement.style.backgroundColor = 'lightgreen';  // Highlight the travelled path in light green
 
                             robotCell = nextCellElement;
