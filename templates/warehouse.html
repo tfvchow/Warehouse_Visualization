@@ -113,6 +113,16 @@
                 if (robotCell && destinationCell) {
                     let path = finder.findPath(robotCell.cellIndex, robotCell.parentElement.rowIndex, destinationCell.cellIndex, destinationCell.parentElement.rowIndex, grid);
 
+                    // Create an array to store the moves
+                    let moves = [];
+
+                    if (path.length > 0) {
+                        for (let cell of path) {
+                            let cellElement = document.getElementsByTagName('tr')[cell[1]].children[cell[0]];
+                            cellElement.style.backgroundColor = 'orange'
+                        }
+                    }
+
                     let intervalId = setInterval(function() {
                         if (path.length > 0) {
                             let nextCell = path.shift();
@@ -120,7 +130,7 @@
 
                             robotCell.textContent = robotCell.textContent.replace('Robot', '').trim();
                             nextCellElement.textContent = 'Robot';
-                            nextCellElement.style.backgroundColor = 'lightgreen';  // Highlight the path in light green
+                            nextCellElement.style.backgroundColor = 'lightgreen';  // Highlight the travelled path in light green
 
                             robotCell = nextCellElement;
                         } else {
