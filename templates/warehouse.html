@@ -93,62 +93,76 @@
                 destination.classList.remove('highlight');
             }
 
-            let destinations = ['A', 'A-D'];
+            let letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+            let destinations = [];
+
+            for (let i = 0; i < 10; i++) {
+                destinations.push(letters[i]);
+                destinations.push(letters[i] + '-D');
+            }
+
             let currentDestinationIndex = 0;
 
-            document.getElementById('goButton').addEventListener('click', function() {
-                let grid = new PF.Grid(20, 20);  // Replace with your actual grid
-                let finder = new PF.AStarFinder();
+            document.getElementById('goButton').addEventListener('click', async function() {
+                while (true) {
+                    let grid = new PF.Grid(20, 20);  // Replace with your actual grid
+                    let finder = new PF.AStarFinder();
 
-                let robotCell = Array.from(document.getElementsByTagName('td')).find(cell => cell.textContent.trim() === 'Robot');
-                let destinationCell = Array.from(document.getElementsByTagName('td')).find(cell => cell.textContent.trim() === destinations[currentDestinationIndex]);
-
-                if (robotCell && destinationCell) {
-                    let path = finder.findPath(robotCell.cellIndex, robotCell.parentElement.rowIndex, destinationCell.cellIndex, destinationCell.parentElement.rowIndex, grid);
-
-                    // Create an array to store the moves
-                    let moves = [];
-
-                    if (path.length > 0) {
-                        for (let cell of path) {
-                            let cellElement = document.getElementsByTagName('tr')[cell[1]].children[cell[0]];
-                            cellElement.style.backgroundColor = 'orange'
-                        }
+                    let robotCell = Array.from(document.getElementsByTagName('td')).find(cell => cell.textContent.trim().includes('Robot'));
+                    let destinationCell = Array.from(document.getElementsByTagName('td')).find(cell => cell.textContent.trim() === destinations[currentDestinationIndex]);
+                    
+                    // Write a log to console if the destination cell is not found
+                    if (!destinationCell) {
+                        console.log('Destination cell not found');
+                        break
                     }
 
-                    let intervalId = setInterval(function() {
+                    if (robotCell && destinationCell) {
+                        let path = finder.findPath(robotCell.cellIndex, robotCell.parentElement.rowIndex, destinationCell.cellIndex, destinationCell.parentElement.rowIndex, grid);
+
+                        // Create an array to store the moves
+                        let moves = [];
+
                         if (path.length > 0) {
+                            for (let cell of path) {
+                                let cellElement = document.getElementsByTagName('tr')[cell[1]].children[cell[0]];
+                                cellElement.style.backgroundColor = 'orange'
+                            }
+                        }
+
+                        for (let nextCell of path) {
+                            await new Promise(resolve => setTimeout(resolve, 500));
+
                             robotPosition = [robotCell.cellIndex, robotCell.parentElement.rowIndex];
                             destination = [destinationCell.cellIndex, destinationCell.parentElement.rowIndex];
 
-                            let nextCell = path.shift();
                             let nextCellElement = document.getElementsByTagName('tr')[nextCell[1]].children[nextCell[0]];
 
-                            robotCell.textContent = robotCell.textContent.replace('Robot', '').trim();
                             if (nextCell[0] === destination[0] && nextCell[1] === destination[1]) {
                                 if (nextCellElement.textContent.includes('-D')) {
                                     nextCellElement.textContent = 'Robot';
                                 } else {
                                     nextCellElement.textContent = 'Robot\n' + nextCellElement.textContent;
                                 }
-                                robotCell.textContent = robotCell.textContent.replace('Robot', '').trim();
+                                robotCell.textContent = "";
                             } else {
-                                robotCell.textContent = robotCell.textContent.replace('Robot', '').trim();
-                                nextCellElement.textContent = 'Robot';
+                                if (robotCell != nextCellElement) {
+                                    nextCellElement.textContent = robotCell.textContent;
+                                    robotCell.textContent = "";
+                                }
                             }
                             
                             nextCellElement.style.backgroundColor = 'lightgreen';  // Highlight the travelled path in light green
 
                             robotCell = nextCellElement;
-                        } else {
-                            clearInterval(intervalId);
-
-                            currentDestinationIndex++;
-                            if (currentDestinationIndex >= destinations.length) {
-                                currentDestinationIndex = 0;  // Loop back to the first destination
-                            }
                         }
-                    }, 500);  // Move the robot every 500 milliseconds
+
+                        currentDestinationIndex++;
+
+                        if (currentDestinationIndex >= destinations.length) {
+                            break;
+                        }
+                    }
                 }
             });
         };
