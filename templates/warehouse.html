@@ -18,6 +18,9 @@
         .highlight {
             background-color: lightgrey;
         }
+        .space-below {
+            margin-bottom: 20px;
+        }
     </style>
     <script src=/static/scripts/pathfinding-browser.min.js></script>
     <script>
@@ -157,6 +160,14 @@
                             robotCell = nextCellElement;
                         }
 
+                        await new Promise(resolve => setTimeout(resolve, 1000));
+
+                        let cells = document.getElementsByTagName('td');
+                        for (let cell of cells) {
+                            if (cell !== robotCell) {
+                                cell.style.backgroundColor = '';
+                            }
+                        }
                         currentDestinationIndex++;
 
                         if (currentDestinationIndex >= destinations.length) {
@@ -169,7 +180,7 @@
     </script>
 </head>
 <body>
-    <button id="goButton">Go!</button>
+    <button class="space-below" id="goButton">Go!</button>
     <table id="warehouse-grid">
         {% for row in range(warehouse|length) %}
         <tr>
