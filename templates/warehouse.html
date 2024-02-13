@@ -98,10 +98,28 @@
                 origin.classList.remove('highlight');
                 destination.classList.remove('highlight');
             }
+
+            document.getElementById('goButton').addEventListener('click', function() {
+                let robotCell = Array.from(document.getElementsByTagName('td')).find(cell => cell.textContent.trim() === 'Robot');
+                if (robotCell) {
+                    let intervalId = setInterval(function() {
+                        let nextCell = robotCell.parentElement.nextElementSibling?.children[robotCell.cellIndex];
+                        if (nextCell) {
+                            robotCell.textContent = robotCell.textContent.replace('Robot', '').trim();
+                            nextCell.textContent = 'Robot';
+                            robotCell = nextCell;
+                            robotCell.style.backgroundColor = 'orange';  // Change the color of the robot's current location
+                        } else {
+                            clearInterval(intervalId);
+                        }
+                    }, 500);  // Move the robot every 500 milliseconds
+                }
+            });
         };
     </script>
 </head>
 <body>
+    <button id="goButton">Go!</button>
     <table id="warehouse-grid">
         {% for row in range(warehouse|length) %}
         <tr>
