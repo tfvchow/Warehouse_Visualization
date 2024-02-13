@@ -2,8 +2,8 @@ from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
 
-# Initialize a 5x5 grid with None
-warehouse = [[None for _ in range(5)] for _ in range(5)]
+# Initialize a 20x20 grid with None
+warehouse = [[None for _ in range(20)] for _ in range(20)]
 
 # Place objects in the grid
 warehouse[1][1] = 'Robot'

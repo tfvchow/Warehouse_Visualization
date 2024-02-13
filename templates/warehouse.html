@@ -38,8 +38,8 @@
         function updateGrid(warehouse) {
             const table = document.getElementById('warehouse-grid');
 
-            for (let row = 0; row < 5; row++) {
-                for (let col = 0; col < 5; col++) {
+            for (let row = 0; row < 20; row++) {
+                for (let col = 0; col < 20; col++) {
                     const cell = table.rows[row].cells[col];
                     if (warehouse[row][col]) {
                         console.log(warehouse[row][col])
