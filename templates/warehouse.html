@@ -19,21 +19,58 @@
             background-color: grey;
         }
     </style>
+    <script>
+        function moveObject(row, col) {
+            fetch('/move_object', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ row, col })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Update the table based on the response data
+                updateGrid(data.warehouse);
+            });
+        }
+
+        function updateGrid(warehouse) {
+            const table = document.getElementById('warehouse-grid');
+
+            for (let row = 0; row < 5; row++) {
+                for (let col = 0; col < 5; col++) {
+                    const cell = table.rows[row].cells[col];
+                    if (warehouse[row][col]) {
+                        console.log(warehouse[row][col])
+                        const object = warehouse[row][col];
+                        cell.innerHTML = object;
+                        // cell.classList.remove('transparent', 'grey');
+                        // cell.classList.add(color);
+                    } else {
+                        cell.innerHTML = '';
+                        // cell.classList.remove('transparent', 'grey');
+                    }
+                }
+            }
+        }
+    </script>
 </head>
 <body>
-    <table>
-        {% for row in range(5): %}
-            <tr>
-                {% for col in range(5): %}
-                    {% if (row, col) in warehouse %}
-                        <td class="{{ warehouse[(row, col)].split(' ')[1] }}">
-                            {{ warehouse[(row, col)].split(' ')[0] }}
-                        </td>
-                    {% else %}
-                        <td></td>
-                    {% endif %}
-                {% endfor %}
-            </tr>
+    <table id="warehouse-grid">
+        {% for row in range(warehouse|length) %}
+        <tr>
+            {% for col in range(warehouse[row]|length) %}
+                {% set cell = warehouse[row][col] %}
+                {% if cell %}
+                    <td class="{{ cell.split(' ')[1] }}" onclick="moveObject({{ row }}, {{ col }})">
+                        {{ cell.split(' ')[0] }}
+                    </td>
+                {% else %}
+                    <td></td>
+                {% endif %}
+            {% endfor %}
+        </tr>
         {% endfor %}
     </table>
 </body>
