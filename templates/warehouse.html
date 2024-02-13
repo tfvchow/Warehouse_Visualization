@@ -18,6 +18,9 @@
         .grey {
             background-color: grey;
         }
+        .highlight {
+            background-color: lightgrey;
+        }
     </style>
     <script>
         function moveObject(row, col) {
@@ -54,6 +57,29 @@
                 }
             }
         }
+
+        window.onload = function() {
+            let cells = Array.from(document.getElementsByTagName('td'));
+            let origin = cells.find(cell => cell.textContent.trim() === 'A');
+            let destination = cells.find(cell => cell.textContent.trim() === 'A-D');
+
+            if (origin && destination) {
+                origin.addEventListener('mouseover', highlight);
+                origin.addEventListener('mouseout', unhighlight);
+                destination.addEventListener('mouseover', highlight);
+                destination.addEventListener('mouseout', unhighlight);
+            }
+
+            function highlight() {
+                if (origin) origin.classList.add('highlight');
+                if (destination) destination.classList.add('highlight');
+            }
+
+            function unhighlight() {
+                if (origin) origin.classList.remove('highlight');
+                if (destination) destination.classList.remove('highlight');
+            }
+        };
     </script>
 </head>
 <body>
