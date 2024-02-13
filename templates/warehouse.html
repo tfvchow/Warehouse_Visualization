@@ -60,24 +60,43 @@
 
         window.onload = function() {
             let cells = Array.from(document.getElementsByTagName('td'));
-            let origin = cells.find(cell => cell.textContent.trim() === 'A');
-            let destination = cells.find(cell => cell.textContent.trim() === 'A-D');
+            let pairs = {};
 
-            if (origin && destination) {
-                origin.addEventListener('mouseover', highlight);
-                origin.addEventListener('mouseout', unhighlight);
-                destination.addEventListener('mouseover', highlight);
-                destination.addEventListener('mouseout', unhighlight);
+            cells.forEach(cell => {
+                let content = cell.textContent.trim();
+                let match = content.match(/(\w+)(-\w+)?/);
+                if (match) {
+                    let origin = match[1];
+                    let destination = match[2];
+                    if (destination) {
+                        // Remove the leading '-' from the destination
+                        destination = destination.slice(1);
+                    }
+                    if (!pairs[origin]) {
+                        pairs[origin] = [];
+                    }
+                    pairs[origin].push(cell);
+                }
+            });
+
+            Object.entries(pairs).forEach(([origin, cells]) => {
+                if (cells.length === 2) {
+                    let [originCell, destinationCell] = cells;
+                    originCell.addEventListener('mouseover', () => highlight(originCell, destinationCell));
+                    originCell.addEventListener('mouseout', () => unhighlight(originCell, destinationCell));
+                    destinationCell.addEventListener('mouseover', () => highlight(originCell, destinationCell));
+                    destinationCell.addEventListener('mouseout', () => unhighlight(originCell, destinationCell));
+                }
+            });
+
+            function highlight(origin, destination) {
+                origin.classList.add('highlight');
+                destination.classList.add('highlight');
             }
 
-            function highlight() {
-                if (origin) origin.classList.add('highlight');
-                if (destination) destination.classList.add('highlight');
-            }
-
-            function unhighlight() {
-                if (origin) origin.classList.remove('highlight');
-                if (destination) destination.classList.remove('highlight');
+            function unhighlight(origin, destination) {
+                origin.classList.remove('highlight');
+                destination.classList.remove('highlight');
             }
         };
     </script>
