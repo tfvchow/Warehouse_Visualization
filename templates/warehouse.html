@@ -15,9 +15,6 @@
         .transparent {
             background-color: transparent;
         }
-        .grey {
-            background-color: grey;
-        }
         .highlight {
             background-color: lightgrey;
         }
@@ -46,14 +43,10 @@
                 for (let col = 0; col < 20; col++) {
                     const cell = table.rows[row].cells[col];
                     if (warehouse[row][col]) {
-                        console.log(warehouse[row][col])
                         const object = warehouse[row][col];
                         cell.innerHTML = object;
-                        // cell.classList.remove('transparent', 'grey');
-                        // cell.classList.add(color);
                     } else {
                         cell.innerHTML = '';
-                        // cell.classList.remove('transparent', 'grey');
                     }
                 }
             }
