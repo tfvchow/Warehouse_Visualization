@@ -100,18 +100,36 @@
                 destination.classList.remove('highlight');
             }
 
+            let destinations = ['A', 'A-D'];
+            let currentDestinationIndex = 0;
+
             document.getElementById('goButton').addEventListener('click', function() {
+                let grid = new PF.Grid(20, 20);  // Replace with your actual grid
+                let finder = new PF.AStarFinder();
+
                 let robotCell = Array.from(document.getElementsByTagName('td')).find(cell => cell.textContent.trim() === 'Robot');
-                if (robotCell) {
+                let destinationCell = Array.from(document.getElementsByTagName('td')).find(cell => cell.textContent.trim() === destinations[currentDestinationIndex]);
+
+                if (robotCell && destinationCell) {
+                    let path = finder.findPath(robotCell.cellIndex, robotCell.parentElement.rowIndex, destinationCell.cellIndex, destinationCell.parentElement.rowIndex, grid);
+
                     let intervalId = setInterval(function() {
-                        let nextCell = robotCell.parentElement.nextElementSibling?.children[robotCell.cellIndex];
-                        if (nextCell) {
+                        if (path.length > 0) {
+                            let nextCell = path.shift();
+                            let nextCellElement = document.getElementsByTagName('tr')[nextCell[1]].children[nextCell[0]];
+
                             robotCell.textContent = robotCell.textContent.replace('Robot', '').trim();
-                            nextCell.textContent = 'Robot';
-                            robotCell = nextCell;
-                            robotCell.style.backgroundColor = 'orange';  // Change the color of the robot's current location
+                            nextCellElement.textContent = 'Robot';
+                            nextCellElement.style.backgroundColor = 'lightgreen';  // Highlight the path in light green
+
+                            robotCell = nextCellElement;
                         } else {
                             clearInterval(intervalId);
+
+                            currentDestinationIndex++;
+                            if (currentDestinationIndex >= destinations.length) {
+                                currentDestinationIndex = 0;  // Loop back to the first destination
+                            }
                         }
                     }, 500);  // Move the robot every 500 milliseconds
                 }
